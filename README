@@ -1,0 +1,6 @@
+Following https://dev.to/edge-and-node/the-complete-guide-to-full-stack-solana-development-with-react-anchor-rust-and-phantom-3291
+
+Updating to work with current Anchor and changing tests to typescript.
+
+yarn add @coral-xyz/anchor
+
