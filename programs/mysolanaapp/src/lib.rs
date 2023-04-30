@@ -6,30 +6,36 @@ declare_id!("7XKKcHWBRrLDLKQgBupgfs531nKGz6P9Kv4MCeEhNWks");
 pub mod mysolanaapp {
     use super::*;
 
-    pub fn create(ctx: Context<Create>) -> Result<()> {
+    pub fn initialize(ctx: Context<Initialize>, data: String) -> Result<()> {
         let base_account = &mut ctx.accounts.base_account;
-        base_account.count = 0;
-
-        msg!("Counter Created");
-        msg!("count: {}", base_account.count);
-
+        let copy = data.clone();
+        base_account.data = data;
+        base_account.data_list.push(copy);
+        
+        msg!("List initialized");
+        msg!("current state: {}", base_account.data);
         Ok(())
     }
 
-    pub fn increment(ctx: Context<Increment>) -> Result<()> {
+    pub fn update(ctx: Context<Update>, data: String) -> Result<()> {
         let base_account = &mut ctx.accounts.base_account;
-        base_account.count += 1;
+        let copy = data.clone();
+        base_account.data = data;
+        base_account.data_list.push(copy);
 
-//        msg!("Incremented count: {}", base_account.count);
-
+        msg!("updated state: {}", base_account.data);
         Ok(())
     }
 }
 
+
+// Instead of dealing with a counter, create a program that allows us to
+// create a message and keep track of all the previously created messages.
+
 // Transaction instructions
 #[derive(Accounts)]
-pub struct Create<'info> {
-    #[account(init, payer = user, space = 8 + 8 + 16)]
+pub struct Initialize<'info> {
+    #[account(init, payer = user, space = 64 + 64)] // increase storage a LOT
     pub base_account: Account<'info, BaseAccount>,
     #[account(mut)]
     pub user: Signer<'info>,
@@ -38,7 +44,7 @@ pub struct Create<'info> {
 
 // Transaction instructions
 #[derive(Accounts)]
-pub struct Increment<'info> {
+pub struct Update<'info> {
     #[account(mut)]
     pub base_account: Account<'info, BaseAccount>,
 }
@@ -46,5 +52,6 @@ pub struct Increment<'info> {
 // An account that goes inside a transaction instruction
 #[account]
 pub struct BaseAccount {
-    pub count: u64,
+    pub data: String,           // Current data held in state
+    pub data_list: Vec<String>, // Vector that holds list of all data ever added
 }

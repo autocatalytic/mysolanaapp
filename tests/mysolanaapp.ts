@@ -5,22 +5,15 @@ import { SystemProgram } from "@solana/web3.js";
 import { expect } from "chai";
 
 describe("mysolanaapp", () => {
-  // Configure the client to use the local cluster.
-
   const provider = anchor.AnchorProvider.env()
   anchor.setProvider(provider)
-
   const program = anchor.workspace.Mysolanaapp as Program<Mysolanaapp>;
+  const baseAccount = anchor.web3.Keypair.generate(); // set test account ahead of tests
 
-  const baseAccount = anchor.web3.Keypair.generate(); // test counter account
-
-  it("Creates a counter", async () => {
-    /* Call the create function via RPC */
-
-    const tx = await program.methods.create()
+  it("It initializes the account", async () => {
+    const tx = await program.methods.initialize("Hello World")
       .accounts({
-        // user: provider.wallet.publicKey,         // Redundant, OK with derive(Accounts) only
-        // systemProgram: SystemProgram.programId,  // same
+        // user and systemProgram are redundant
         baseAccount: baseAccount.publicKey,
       })
       .signers([baseAccount])
@@ -28,19 +21,34 @@ describe("mysolanaapp", () => {
 
     // Fetch the account and check the value of the count
     const account = await program.account.baseAccount.fetch(baseAccount.publicKey)
-    // console.log('Counter count: ', account.count.toNumber());
-    expect(account.count.toNumber()).to.equal(0);
+    console.log('Initialized data: ', account.data);
+    expect(account.data).to.equal("Hello World");
   });
 
-  it("Increments the counter", async () => {
-    const tx = await program.methods.increment()
+  it("Updates a previously created account", async () => {
+    const tx = await program.methods.update("Some new data")
       .accounts({
         baseAccount: baseAccount.publicKey,
-      })
-//      .signers([baseAccount])
+      }) // don't need .signers next, so send it
       .rpc();
 
       const account = await program.account.baseAccount.fetch(baseAccount.publicKey)
-      expect(account.count.toNumber()).to.equal(1);
+      console.log('Updated data: ', account.data);
+      console.log('all account data: ', account);
+      console.log('All data: ', account.dataList);
+      expect(account.dataList.length).to.equal(2);
+    });
+    
+    it("Updates a previously created account", async () => {
+      const tx = await program.methods.update("Last new data")
+        .accounts({
+          baseAccount: baseAccount.publicKey,
+        }) // don't need .signers next, so send it
+        .rpc();
+  
+        const account = await program.account.baseAccount.fetch(baseAccount.publicKey)
+        console.log('Updated data: ', account.data);
+        console.log('all account data: ', account);
+        expect(account.dataList.length).to.equal(3);
+      });
   });
-});
