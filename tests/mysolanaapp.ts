@@ -8,7 +8,10 @@ describe("mysolanaapp", () => {
   const provider = anchor.AnchorProvider.env()
   anchor.setProvider(provider)
   const program = anchor.workspace.Mysolanaapp as Program<Mysolanaapp>;
-  const baseAccount = anchor.web3.Keypair.generate(); // set test account ahead of tests
+
+  // Set test account up here so both tests have access
+  // it works because we're not doing PDA/CPI
+  const baseAccount = anchor.web3.Keypair.generate(); 
 
   it("It initializes the account", async () => {
     const tx = await program.methods.initialize("Hello World")
