@@ -38,7 +38,7 @@ describe("mysolanaapp", () => {
       console.log('All data: ', account.dataList);
       expect(account.dataList.length).to.equal(2);
     });
-    
+
     it("Updates a previously created account", async () => {
       const tx = await program.methods.update("Last new data")
         .accounts({
