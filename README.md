@@ -1,4 +1,4 @@
-Thank you Nader Dabit for the work here, which this project is following: https://dev.to/edge-and-node/the-complete-guide-to-full-stack-solana-development-with-react-anchor-rust-and-phantom-3291 Follow his work either at dev.to or here: https://github.com/dabit3
+Thanks Nader Dabit for the following, which this project follows: https://dev.to/edge-and-node/the-complete-guide-to-full-stack-solana-development-with-react-anchor-rust-and-phantom-3291 Follow his work either at dev.to or here: https://github.com/dabit3
 
 Since code and Solana has changed so much since then, I'm updating the web post code to work with current Anchor and changing tests to typescript. First order of business is to shake the spectre of Serum and move over to Coral (even if it's already dealt with using symlinks, branding matters to me).
 
